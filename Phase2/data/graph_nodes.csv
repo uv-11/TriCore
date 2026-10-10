@@ -1,0 +1,12 @@
+node_id,label,x_km,y_km
+0,DN001 City Banquet Hall,0,0
+1,DN002 Metro Hotel Kitchen,9,1
+2,Junction North,2,4
+3,Junction East,6,1
+4,Junction Bridge,4,-3
+5,R001 Hope Shelter,2,0
+6,R002 City Food Bank,4,0
+7,R003 Green Community Kitchen,7,4
+8,R004 Sunrise Care Home,-3,-1
+9,R005 Riverside School Meals,10,6
+10,R006 Bridge Pantry,3,-1

@@ -68,5 +68,4 @@ Each module has its own small test program that checks it on its own, separate f
 
 - Travel times use simulated distances.
 - The program recommends. It does not decide.
-- This is a prototype, so some menu options and modules are not built yet.git log --all --format=%B | Select-String -Pattern "claude|anthropic" -CaseSensitive:$false
-git log --all --format="%h | %an <%ae> | %cn" -n 20
+- This is a prototype, so some menu options and modules are not built yet

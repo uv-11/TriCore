@@ -1,0 +1,299 @@
+% Exact LaTeX recreation of the supplied Phase-1.pdf
+% Compile with pdfLaTeX. Place member pictures in the same folder if required.
+
+
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[a4paper,left=2.0cm,right=2.0cm,top=1.55cm,bottom=1.55cm]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{array}
+\usepackage{tabularx}
+\usepackage{ragged2e}
+\usepackage{enumitem}
+\usepackage{fancyhdr}
+\usepackage{tikz}
+\usepackage{setspace}
+
+% -------------------------------------------------
+% COLOURS
+% -------------------------------------------------
+\definecolor{TitleBlue}{RGB}{61,103,154}
+
+% -------------------------------------------------
+% GENERAL SETTINGS
+% -------------------------------------------------
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0pt}
+\renewcommand{\arraystretch}{1.0}
+
+% The supplied document uses a clean sans-serif heading style
+% and italic serif-style explanatory text.
+\newcommand{\blueheading}[1]{%
+    {\sffamily\color{TitleBlue}\fontsize{15}{18}\selectfont #1}%
+}
+
+\newcommand{\bluebigheading}[1]{%
+    {\sffamily\bfseries\color{TitleBlue}\fontsize{16}{19}\selectfont #1}%
+}
+
+\newcommand{\instruction}[1]{%
+    {\itshape\fontsize{10.5}{12.5}\selectfont #1}%
+}
+
+\newcommand{\answerbox}[2][3.0cm]{%
+    \vspace{2pt}
+    \noindent
+    \fbox{%
+        \begin{minipage}[t][#1][t]{\dimexpr\textwidth-2\fboxsep-2\fboxrule\relax}
+            \vspace{1mm}
+            \itshape #2
+        \end{minipage}
+    }
+}
+
+% -------------------------------------------------
+% HEADER / FOOTER
+% -------------------------------------------------
+\pagestyle{fancy}
+\fancyhf{}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+
+\fancyhead[L]{%
+    \sffamily\bfseries\itshape\fontsize{10.5}{12}\selectfont
+    DSCPP-III-2026-T378
+}
+\fancyhead[R]{%
+    \sffamily\bfseries\fontsize{10.5}{12}\selectfont
+    PROJECT PROPOSAL
+}
+\fancyfoot[R]{%
+    \itshape\fontsize{10}{12}\selectfont
+    Page \thepage
+}
+\setlength{\headheight}{14pt}
+\setlength{\headsep}{23pt}
+\setlength{\footskip}{24pt}
+
+% -------------------------------------------------
+% PAGE 1
+% -------------------------------------------------
+\begin{document}
+
+\vspace*{4mm}
+
+\bluebigheading{PROJECT AND TEAM INFORMATION}
+
+\vspace{13mm}
+
+\blueheading{Project Title}
+
+\vspace{1mm}
+
+\instruction{(Try to choose a catchy title. Max 20 words).}
+
+\answerbox[1.0cm]{Community Bridge Recommendation system}
+
+\vspace{13mm}
+
+\blueheading{Student / Team Information}
+
+\vspace{2mm}
+
+% Team information table
+% Compact 4-member layout so all members remain on Page 1.
+\noindent
+\begin{tabularx}{\textwidth}{|>{\RaggedRight\arraybackslash}p{0.69\textwidth}|>{\RaggedRight\arraybackslash}X|}
+\hline
+\begin{minipage}[t]{\linewidth}
+\vspace{1.5mm}
+\textit{Team Name:}\\[-1mm]
+\textit{Team \#}
+\vspace{1.5mm}
+\end{minipage}
+&
+\begin{minipage}[t]{\linewidth}
+\vspace{1.5mm}
+\textit{TriCore}
+\textit{\\DSCPP-III-2026-T378}
+\vspace{1.5mm}
+\end{minipage}
+\\
+\hline
+\begin{minipage}[t][3.25cm][t]{\linewidth}
+\vspace{1.5mm}
+\textbf{Team member 1 (Team Lead)}\\[-1mm]
+\textit{(Last Name, name: student ID: email, picture):}
+\vspace{2.0cm}
+\end{minipage}
+&
+\begin{minipage}[t][3.30cm][t]{\linewidth}
+\vspace{1.5mm}
+\textit{Sahoo, Amrita -- 2510373845}\\
+\textit{imamritasahoo@gmail.com}
+
+\vspace{2mm}
+\includegraphics[width=3.0cm,height=1.5cm,keepaspectratio]{Report/pblmember.png}
+\end{minipage}
+\\
+\hline
+\begin{minipage}[t][3.30cm][t]{\linewidth}
+\vspace{1.5mm}
+\textbf{Team member 2}\\[-1mm]
+\textit{(Last Name, name: student ID: email, picture):}
+\vspace{2.0cm}
+\end{minipage}
+&
+\begin{minipage}[t][3.25cm][t]{\linewidth}
+\vspace{1.5mm}
+\textit{Ahmed , Mohd Uvais  -- 2510370250}\\
+\textit{2510370250@geu.ac.in}
+
+\vspace{2mm}
+\includegraphics[width=3.0cm,height=1.5cm,keepaspectratio]{PPT/member2.png.png}
+\end{minipage}
+\\
+\hline
+\begin{minipage}[t][3.25cm][t]{\linewidth}
+\vspace{1.5mm}
+\textbf{Team member 3}\\[-1mm]
+\textit{(Last Name, name: student ID: email, picture):}
+\vspace{2.0cm}
+\end{minipage}
+&
+\begin{minipage}[t][4.0cm][t]{\linewidth}
+\vspace{1.5mm}
+\textit{Agrawal, Shorya -- 2510350090}\\
+\textit{sandhyaagarwal12345\\6789@gmail.com}
+
+\vspace{2mm}
+\includegraphics[width=3.0cm,height=1.5cm,keepaspectratio]{member3.png}
+\end{minipage}
+\\
+\hline
+\end{tabularx}
+
+\newpage
+
+% -------------------------------------------------
+% PAGE 2
+% -------------------------------------------------
+
+\bluebigheading{PROPOSAL DESCRIPTION (10 pts)}
+
+\vspace{12mm}
+
+\blueheading{Motivation (1 pt)}
+
+\vspace{1mm}
+
+\instruction{(Describe the problem you want to solve and why it is important. Max 300 words).}
+
+\answerbox[9.0cm]{As we know that food wastage is a significant problem. Also, many organizations and communities still require food resources. During the times of having excess food, the challenge is not to only find a recipient, but to decide how available food can be allocated efficiently before it reaches its expiry \\date.\\A donor (which includes restaurant, hotel, or event organizer) can have a excess food, where as, there are recipients with different capacities, food preferences, availability, and collection capabilities. Manual coordination will require repeated check of these conditions and decide which recipient should be contacted first. But, it can become difficult when multiple donations are pending at the \\same time.\\Our project, "Community Bridge Recommendation System" will be organizing this decision making process in such a way after accepting donation information, it will check recipient feasibility, rank suitable recipients, and then it will prioritize urgent donations according to the usable time. The system is not about attempting to replace any human coordinator or make automatic final decisions. Instead, it will follow the principle:\\\textbf{“The system recommends, the human decides, the system executes, and the system records.”}\\The project is also about demonstrating how Data Structures and C++ concepts can be used meaningfully to a practical problem instead of implementing in isolated academic examples.}
+
+\vspace{15mm}
+
+\blueheading{State of the Art / Current solution (1 pt)}
+
+\vspace{1mm}
+
+\instruction{(Describe how the problem is solved today (if it is). Max 200 words).}
+
+\answerbox[7.0cm]{Currently, excess food redistribution is commonly coordinated by using NGO networks,volunteers, phone calls, messaging, spreadsheets, and manually planned pickup and distribution schedules.\\A coordinator generally needs to identify a suitable recipient, check whether the organization is currently accepting food, determine whether it can handle the quantity and food type, and decide how quickly the donation needs to be moved. When a recipient cannot accept the complete donation, the remaining food may have to be handled separately.\\Existing digital food-rescue platforms demonstrate that technology can support activities such as donation coordination, recipient matching, and multi-stop food rescue. However, our project focuses on creating a small, transparent academic prototype that demonstrates how fundamental data structures can support this decision-making process.\\Since, our system is not attempting to build a production-scale logistics platform, it will have the essential decision workflow:\\\textbf{Donation → Feasibility → Recommendation → Human Decision → Allocation → Transaction Record.}}
+
+\vspace{2mm}
+
+\newpage
+\blueheading{Project Goals and Milestones (2 pts)}
+
+\vspace{2mm}
+
+\instruction{(Describe the project general goals. Include initial milestones as well any other milestones. Max 300 words).}
+
+\answerbox[12.0cm]{\textbf{GOALS:}\\The primary goal is to develop a working decision-support prototype based on C++ so that it can organize surplus food redistribution using fundamental concepts of Data Structures and OOP.\\The system will: \begin{itemize}[noitemsep, topsep=0pt]
+    \item Maintain donor and recipient information.
+    \item Allow coordinators to create and manage donations.
+    \item Evaluate recipient feasibility based on operational conditions. 
+    \item Support both full and partial donation acceptance.
+    \item Prioritize donations according to usable time remaining.
+    \item Rank feasible recipients using deterministic criteria.
+    \item Allow the coordinator to make the final allocation decision. 
+    \item Update donation and recipient states after allocation. 
+    \item Maintain a persistent transaction history.
+\end{itemize}\textbf{MILESTONES}\\Milestone 1: Designing project models and basic C++ structure.\\Milestone 2: To implement CSV-based donor and recipient data loading.\\Milestone 3: To implement interactive donor, recipient, and donation management.\\Milestone 4: To implement feasibility analysis and partial-match handling.\\Milestone 5: To implement recipient recommendation using sorting.\\Milestone 6: To implement donation urgency using a priority queue.\\Milestone 7: To implement human-approved allocation and state updates.\\Milestone 8: To implement transaction logging and persistence.\\Milestone 9: Performing integrated testing, including the 250 → 140 partial-allocation scenario.\\Future milestone: Will introduce distance/travel-time consideration into feasibility and recommendation.}
+
+\vspace{7mm}
+
+\blueheading{Project Approach (3 pts)}
+
+\vspace{1mm}
+
+\instruction{(Describe how you plan to articulate and design a solution. Including platforms and technologies that you will use. Max 300 words}
+
+
+\answerbox[8.8cm]{The project will implement as a C++ console-based application by using object-oriented design and some data structures concepts.\\This system will be maintaining Donor, Recipient, Donation, and Transaction objects by using a central DataManager. Persistent information will be stored in local CSV files using C++ file streams.\\The application is following a decision-support workflow. When a donation is created, the system will first evaluate potential recipients using feasibility conditions like current acceptance status, food compatibility, available capacity, and pickup capability.\\Feasible recipients are then ranked using std::sort. The current recommendation will be prioritizing::\begin{enumerate}[noitemsep, topsep=0pt]
+    \item  Higher potential food acceptance.
+    \item  Smaller unused capacity when acceptance is equal.
+    \item  Recipient ID as a deterministic tie-breaker.
+\end{enumerate} 
+Pending donations will be managed using a std::priority\_queue, where donations with less usable time remaining will receive higher priority.\\The final allocation is human-in-the-loop. The coordinator will select the recipient and quantity, then the system validate the decision and will update both donation and recipient states.\\Successful allocations will be stored as transactions and persisted in a CSV file.\\As a future enhancement, donor and recipient locations can be represented using coordinates so that the estimated distance/travel time can be used for feasibility and recommendation.}
+
+\newpage
+
+% -------------------------------------------------
+% PAGE 3
+% -------------------------------------------------
+
+\blueheading{System Architecture (High Level Diagram)(2 pts)}
+
+\vspace{1mm}
+
+\instruction{(Provide an overview of the system, identifying its main components and interfaces in the form of a diagram using a tool}
+
+\instruction{of your choice).}
+
+\answerbox[23.0cm]{
+    \centering
+    \includegraphics[width=0.17\textwidth]{Report/PBL.drawio.png}
+}
+
+\vspace{12mm}
+
+\blueheading{Project Outcome / Deliverables (1 pts)}
+
+\vspace{1mm}
+
+\instruction{(Describe what are the outcomes / deliverables of the project. Max 200 words).}
+
+\answerbox[3.9 cm]{The Community Bridge Recommendation System is developed to support and improve the decision made by the coordinator to ensure that the surplus food reaches to those in need. The complete system will allow a coordinator to create donors, recipients, donations, modify details and with the help of recommendation system the process of allocation would be more efficient as it is capable of handling partial food allocation too. After a successful donation allocation the system also keeps a consistent donation and recipient state and generate transaction record. This project is a demonstration of how fundamental Data Structures and C++ concepts such as vectors, linear searching, sorting, priority queues and file handling etc. used together to solve the problem of efficient food redistribution.}
+
+\vspace{12mm}
+
+\blueheading{Assumptions}
+
+\vspace{2mm}
+
+\instruction{( Describe the assumptions ( if any ) you are making to solve the problem. Max 100 words )}
+
+\answerbox[2.5cm]{This prototype will assume that donor and recipient records are predefined and maintained locally using CSV files. Recipient capacity will represent currently available capacity. Food compatibility and pickup capability will be represented using predefined attributes. Donation usable time will be entered in minutes. The system will not use real-time GPS, traffic, external routing APIs, databases, or machine learning. Final allocation decisions will be made by a human.}
+
+\vspace{12mm}
+
+\blueheading{References}
+
+\vspace{1mm}
+
+\instruction{(Provide a list of resources or references you utilised for the completion of this deliverable. You may provide links).}
+
+\answerbox[5.0cm]{\begin{enumerate}[noitemsep, topsep=0pt]
+    \item \textbf{ISO C++ Standard Library Documentation —} Reference for std::vector, std::sort, std::priority\_queue, strings, and file streams.
+    \item \textbf{Cpp reference — C++ Standard Library —}  Reference for C++ containers, algorithms, file streams, and standard library operations.
+    \item \textbf{Data Structures and Algorithms Course Material —}  Reference for searching, sorting, priority queues, complexity analysis, and related DSA concepts.
+    \item \textbf{Object-Oriented Programming with C++ Course Material —}  Reference for classes, objects, encapsulation, constructors, and member functions.
+    \item \textbf{Project-specific design and testing documentation —} Used to define the Food Rescue workflow, feasibility rules, recommendation process, allocation logic, and transaction handling.
+\end{enumerate}}
+
+\end{document}

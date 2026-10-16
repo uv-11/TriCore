@@ -1,12 +1,12 @@
 node_id,label,x_km,y_km
-0,DN001 City Banquet Hall,0,0
-1,DN002 Metro Hotel Kitchen,9,1
-2,Junction North,2,4
-3,Junction East,6,1
-4,Junction Bridge,4,-3
-5,R001 Hope Shelter,2,0
-6,R002 City Food Bank,4,0
-7,R003 Green Community Kitchen,7,4
-8,R004 Sunrise Care Home,-3,-1
-9,R005 Riverside School Meals,10,6
-10,R006 Bridge Pantry,3,-1
+0,DN001 Shagun Banquet Hall Karol Bagh,0,0
+1,DN002 Hotel Rajdhani Kitchen Preet Vihar,9,1
+2,Azadpur Chowk Junction,2,4
+3,ITO Junction,6,1
+4,Nizamuddin Bridge Junction,4,-3
+5,R001 Rain Basera Night Shelter Paharganj,2,0
+6,R002 Annapurna Food Bank Connaught Place,4,0
+7,R003 Guru Seva Langar Shahdara,7,4
+8,R004 Shanti Vridh Ashram Rajouri Garden,-3,-1
+9,R005 Sarvodaya Vidyalaya Mid Day Meal Dilshad Garden,10,6
+10,R006 Jan Seva Ration Pantry Lodhi Colony,3,-1

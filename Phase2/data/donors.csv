@@ -1,0 +1,7 @@
+donor_id,name,type,node_id
+DN001,Shagun Banquet Hall Karol Bagh,CATERER,0
+DN002,Hotel Rajdhani Kitchen Preet Vihar,HOTEL,1
+DN003,Gupta Bakers Laxmi Nagar,BAKERY,3
+DN004,Okhla Mandi Fruit Traders,MARKET,4
+DN005,Daily Needs Supermarket Rohini,SUPERMARKET,2
+DN006,Sarita Vihar Hospital Canteen,CANTEEN,4

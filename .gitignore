@@ -2,6 +2,5 @@
 *.o
 Phase2/docs/
 Phase2/reference/
-Phase2/data/
 test_all.bat
 .clang-format

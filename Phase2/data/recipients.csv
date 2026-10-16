@@ -1,0 +1,17 @@
+recipient_id,name,type,available_capacity,accepted_types,accepting,can_pickup,node_id
+R001,Rain Basera Night Shelter Paharganj,SHELTER,150,COOKED;PACKAGED,1,1,5
+R002,Annapurna Food Bank Connaught Place,FOOD_BANK,300,PACKAGED;PRODUCE;BAKERY,1,1,6
+R003,Guru Seva Langar Shahdara,COMMUNITY_KITCHEN,120,COOKED,1,1,7
+R004,Shanti Vridh Ashram Rajouri Garden,CARE_HOME,80,COOKED;BAKERY,1,1,8
+R005,Sarvodaya Vidyalaya Mid Day Meal Dilshad Garden,SCHOOL,200,COOKED;PACKAGED,1,1,9
+R006,Jan Seva Ration Pantry Lodhi Colony,PANTRY,100,PACKAGED;PRODUCE,1,0,10
+R007,Sewa Bhawan Kitchen Tilak Nagar,COMMUNITY_KITCHEN,90,COOKED,0,1,8
+R008,Ashray Women Shelter Ram Nagar,SHELTER,60,COOKED;BAKERY,1,1,5
+R009,Samaj Fridge Point Barakhamba,PANTRY,0,PACKAGED;PRODUCE;BAKERY,1,1,6
+R010,Bal Sadan Childrens Home Vivek Vihar,CHILDRENS_HOME,70,COOKED;PACKAGED;BAKERY,1,1,7
+R011,Dastarkhwan Soup Kitchen Jangpura,COMMUNITY_KITCHEN,150,COOKED;PRODUCE,1,1,10
+R012,Dastarkhwan Annex Kitchen Bhogal,COMMUNITY_KITCHEN,150,COOKED;PRODUCE,1,1,10
+R013,Aapda Relief Point Laxmi Nagar,RELIEF_POINT,100,COOKED;PACKAGED;PRODUCE;BAKERY,1,1,3
+R014,Mazdoor Mess Okhla,MESS,110,COOKED;PACKAGED,1,0,4
+R015,Navyug Vidyalaya Canteen Yamuna Vihar,SCHOOL,120,PACKAGED;BAKERY;PRODUCE,1,1,9
+R016,Model Town Samudayik Bhawan,COMMUNITY_CENTRE,40,PACKAGED;PRODUCE,1,1,2

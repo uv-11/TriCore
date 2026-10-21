@@ -6,43 +6,43 @@
 
 using namespace std;
 
-// Its a base exception for all application exceptions which mah rise during execution of program
+// base class for every exception the app can throw
 class AppException : public exception
 {
 public:
-  // stores the error message used by what()
+  // stores the error message used by what
   AppException(const string& message);
-  // Allows safe destruction through a base class pointer as required by std::exception
+  // allows safe destruction through a base class pointer
   virtual ~AppException() throw();
-  // Returns the stored error message as a C-style string because the base class std::exception requires it
+  // returns the stored message as a c style string
   virtual const char* what() const throw();
 
 private:
-    string message_;    // Stores the complete app error mess
+    string message_;    // the stored error message
 };
 
-// Represents invalid or badly formatted input text
+// invalid or badly formatted input text
 class FormatException : public AppException
 {
 public:
-    // passes the formatting error mess to base class 
+    // passes the formatting error message to base class
     FormatException(const string& message);
 };
 
-// Represents invalid / inconsistent data loaded from files
+// invalid or inconsistent data loaded from files
 class DataException : public AppException
 {
 public:
+  // passes the data error message to base class
   DataException(const string& message);
 };
 
-// Represents the incorrect use of an internal program structure
+// incorrect use of an internal program structure
 class StructureException : public AppException
 {
 public:
+  // passes the structure error message to base class
   StructureException(const string& message);
 };
 
 #endif
-
-

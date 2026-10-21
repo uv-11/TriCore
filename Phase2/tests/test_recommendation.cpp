@@ -63,9 +63,8 @@ void testFeasibilityReasons() {
         FOOD_INCOMPATIBLE,
         "F2 food incompatible");
 
-    vector<FoodType> emptyTypes;
     Recipient noCapacity = makeRecipient(
-        3, 0, emptyTypes, true, true);
+        3, 0, cooked, true, true);
     checkReason(
         checkFeasibility(noCapacity, donation, Duration(5)),
         NO_CAPACITY,

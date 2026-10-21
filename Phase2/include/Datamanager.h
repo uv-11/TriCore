@@ -15,7 +15,7 @@ using namespace std;
 // stores all loaded data and the indexes used to find records
 struct dataset
 {
-    // Initializes an empty dataset.
+    // creates an empty dataset
     dataset();
 
     vector<Donor> donors; // all donors loaded from the file
@@ -41,34 +41,34 @@ class datamanager
 public:
     datamanager(const string& prefix);
 
-    // Loads all CSV tables into memory and collects non-fatal warnings.
+    // loads and validates every csv file into the dataset
     void loadall(dataset& target, list<string>& warnings);
 
-    // Saves a table of CSV records using an atomic temp-file replace.
+    // writes one table safely using a temp file
     void savetable(const string& filename, const string& header, const vector<const CsvRecord*>& records);
 
-    // Appends a single transaction to transactions.csv.
+    // adds one line to the transactions file
     void appendtransaction(const Transaction& entry);
 
-    // Saves updated donations, recipients, and the new transaction.
+    // saves a new allocation and its updated records
     void commitallocation(const dataset& source, const Transaction& entry);
 
-    // Saves the current state of donations to donations.csv.
+    // saves the current donations table
     void commitdonations(const dataset& source);
 
-    // Validates business rules across the entire dataset and returns findings.
+    // checks the loaded data for consistency problems
     vector<string> checkinvariants(const dataset& source) const;
 
 private:
     string prefix_; // folder path containing the csv files
 
-    // Recovers a file from its temp copy if an earlier save was interrupted.
+    // recovers a file after an interrupted save
     void recoverfile(const string& filename, list<string>& warnings);
 
-    // Writes all donations to a temporary file and atomically replaces donations.csv.
+    // writes the donations table safely
     void savedonations(const dataset& source);
 
-    // Writes all recipients to a temporary file and atomically replaces recipients.csv.
+    // writes the recipients table safely
     void saverecipients(const dataset& source);
 };
 

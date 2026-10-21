@@ -9,29 +9,15 @@
 
 using namespace std;
 
-// Puts every donation that is still PENDING or PARTIAL into the urgency queue.
-static void fillurgencyqueue(const vector<Donation>& donations, urgencyqueue& waiting)
-{
-    for (int i = 0; i < static_cast<int>(donations.size()); i++)
-    {
-        if (donations[i].status() == PENDING || donations[i].status() == PARTIAL)
-        {
-            waiting.push(donations[i], i);
-        }
-    }
-}
 
 
-// Menu and orchestration only. All logic lives in the other files.
+// menu and orchestration only, all logic lives in the other files
 int main(int argc, char* argv[])
 {
-    // Run from the repository root. A different data folder prefix can be given.
-    // prefix is put in front of every file name, so Phase2/data/ means
-    // Phase2/data/donors.csv and so on.
+    // run from the repo root, prefix is put in front of every file name
     string prefix = "Phase2/data/";
 
-    // argc is the number of words on the command line and argv holds them. argv[1] is the
-    // first word after the program name.
+    // argc counts the command line words, argv holds them, argv[1] is the first one
     if (argc > 1)
     {
         prefix = argv[1];
@@ -50,22 +36,21 @@ int main(int argc, char* argv[])
 
     try
     {
-        // files reads and writes the CSV files
+        // files reads and writes the csv files
         datamanager files(prefix);
-        // data holds everything that is kept in memory
+        // data holds everything kept in memory
         dataset data;
-        // warnings collects the findings that are shown at the start but do not stop it
+        // warnings collects startup problems that do not stop the program
         list<string> warnings;
 
-        // loadall refuses bad data by throwing a DataException, caught at the end of main
+        // loadall throws a dataexception on bad data, caught at the end of main
         files.loadall(data, warnings);
-        // new transaction ids continue after the highest id in transactions.csv
+        // new transaction ids continue after the highest id on file
         transactionidissuer::seed(data.lasttransaction);
 
-        // provider answers: how long does a trip from node A to node B take, and which
-        // route is used (Dijkstra)
+        // provider gives the travel time and route using dijkstra
         dijkstratraveltime provider(data.network);
-        // waiting holds the open donations, the most urgent first
+        // waiting holds the open donations, most urgent first
         urgencyqueue waiting;
         fillurgencyqueue(data.donations, waiting);
 
@@ -73,14 +58,13 @@ int main(int argc, char* argv[])
         cout << "(travel times are simulated minutes, not real road data)" << endl;
         ConsoleView::showWarnings(warnings);
 
-        // running becomes false when the coordinator exits or the input ends
+        // running becomes false when the coordinator exits or input ends
         bool running = true;
 
         while (running)
         {
             ConsoleView::showMenu();
-            // choice is the menu number that was typed (0 to 6), or -1 when the
-            // input has ended. Both 0 and -1 leave the loop.
+            // choice is the typed menu number, 0 to 6, or -1 at end of input
             int choice = ConsoleView::readMenu();
 
             if (choice == 1)
@@ -91,17 +75,14 @@ int main(int argc, char* argv[])
                 }
                 else
                 {
-                    // index is the position of the most urgent donation. If the input
-                    // ends inside the workflow, processDonation returns false and the
-                    // program stops.
+                    // index is the most urgent donations position, false means input ended
                     int index = waiting.popmosturgent();
                     running = ConsoleView::processDonation(data, files, provider, index);
                 }
             }
             else if (choice == 2)
             {
-                // addDonation saves the new donation and returns its index, or -1 if
-                // it was cancelled. A new donation joins the urgency queue.
+                // adddonation saves the donation and returns its index, or -1 if cancelled
                 int index = ConsoleView::addDonation(data, files);
 
                 if (index >= 0)
@@ -127,14 +108,14 @@ int main(int argc, char* argv[])
             }
             else
             {
-                // 0 is Exit and -1 means the input has ended; both lead here
+                // 0 is exit and -1 means the input has ended, both lead here
                 running = false;
             }
         }
     }
     catch (const AppException& problem)
     {
-        // a bad data file or a failed save ends the program with a clear message
+        // a bad data file or failed save ends the program with a message
         cout << endl << "Error: " << problem.what() << endl;
         cout << "Data folder used: " << prefix << endl;
         return 1;

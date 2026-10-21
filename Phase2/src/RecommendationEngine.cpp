@@ -169,7 +169,7 @@ RecommendationResult recommend(const Donation& donation, const vector<Recipient>
             result.rejected_.push_back(
                 Rejection(recipient.id(), reason, travel));
         } else {
-            int acceptance = donation.remaining();
+            int acceptance = donation.remainingQuantity();
 
             if (recipient.availableCapacity() < acceptance) {
                 acceptance = recipient.availableCapacity();

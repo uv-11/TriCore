@@ -6,40 +6,45 @@
 
 using namespace std;
 
-// Represents a project ID using a prefix and num part
+// represents a project id using a prefix and a number part
 class EntityId
 {
 public:
-    // default empty ID.
+    // creates a default empty id
     EntityId();
 
-    // Creates an ID from its prefix and num part.
+    // creates an id from a prefix and a number
     EntityId(const string& prefix, int number);
 
-    // Parses and validates an ID string against the expected prefix.
+    // parses and validates an id string against the expected prefix
     static EntityId parse(const string& text,const string& expectedPrefix);
 
-    // Id to text conversion with atleast three num digits.
+    // converts the id to text with at least three digits
     string toString() const;
 
+    // returns the number part of the id
     int number() const;
 
-    // Orders ids by prefix and then num value
+    // orders ids by prefix and then by number
     bool operator<(const EntityId& other) const;
 
-    // Checks whether both id parts are equal or not
+    // checks whether both id parts are equal
     bool operator==(const EntityId& other) const;
 
+    // increments the id and returns the updated object
     EntityId& operator++();
+
+    // increments the id and returns the old value
     EntityId operator++(int);
 
-    // Prints the ID using its formatted string representation.
+    // prints the id using its formatted string
     friend ostream& operator<<(ostream& out, const EntityId& id);
 
 private:
+    // the id prefix
     string prefix_;   
+    // the id number
     int number_;       
 };
 
 #endif
-

@@ -4,3 +4,7 @@ Phase2/docs/
 Phase2/reference/
 test_all.bat
 .clang-format
+.vscode
+compile_flags.txt
+.clangd
+Phase2/data_check

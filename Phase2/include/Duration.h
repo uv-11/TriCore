@@ -5,38 +5,38 @@
 using namespace std;
 typedef int Minutes;
 const int INF_MINUTES = 1000000000;
-// Wraps an integer number of mins and represents unreachable time safely.
+// wraps a number of minutes and represents unreachable time safely
 class Duration
 {
 public:
-    // Creates a duration of zero minutes.
+    // creates a duration of zero minutes
     Duration();
 
-    // Creates a duration and validates given mins
+    // creates a duration and validates the given minutes
     Duration(int minutes);
 
-    // Returns the standard infinite duration
+    // returns the standard infinite duration
     static Duration infinite();
 
-    // Checks whether this duration represents infinity
+    // checks whether this duration represents infinity
     bool isInfinite() const;
 
-    // Returns the stored number of minutes
+    // returns the stored number of minutes
     int minutes() const;
 
-    // Adds two durations with INF-safe saturating behaviour
+    // adds two durations with inf safe saturating behaviour
     friend Duration operator+(const Duration& a, const Duration& b);
 
-    // Compares two stored duration values
+    // compares two stored duration values
     friend bool operator<(const Duration& a, const Duration& b);
 
-    // Compares two stored duration values including equality
+    // compares two stored duration values including equality
     friend bool operator<=(const Duration& a, const Duration& b);
 
-    // Checks whether two durations have the same stored value
+    // checks whether two durations have the same stored value
     friend bool operator==(const Duration& a, const Duration& b);
 
-    // Prints either the minute value or INF
+    // prints either the minute value or inf
     friend ostream& operator<<(ostream& out, const Duration& d);
 
 private:
@@ -44,4 +44,3 @@ private:
 };
 
 #endif
-

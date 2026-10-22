@@ -53,18 +53,19 @@ Files currently in the repository:
 | `EntityId` | Identifiers for donors, recipients, donations and transactions |
 | `Exceptions` | Error types that carry the file, line and reason of a problem |
 | `Models` | The main records: donor, recipient, donation, transaction |
-| `DataManager` | Loads, checks and saves the CSV files |
-| `Graph` | The road network, stored as a linked list of connections |
-| `PriorityQueue` | Keeps the most urgent donation, and the nearest location during routing, at the front |
-| `IntStack` | Builds a travel route from the result of the shortest-path search |
-| `HashIndex` | Looks up a donor, recipient or donation by its id |
-| `TravelTime` | Shortest travel time and route between two locations, using Dijkstra's algorithm |
+| `Datamanager` | Loads, checks and saves the CSV files |
+| `graph` | The road network, stored as a linked list of connections |
+| `priorityqueue` | Keeps the most urgent donation, and the nearest location during routing, at the front |
+| `intstack` | Builds a travel route from the result of the shortest-path search |
+| `hashindex` | Looks up a donor, recipient or donation by its id |
+| `traveltime` | Shortest travel time and route between two locations, using Dijkstra's algorithm |
 | `RecommendationEngine` | Feasibility rules and ranking of recipients |
 | `Sorting` | Merge sort, used to rank recipients |
-| `AllocationManager` | Carries out an allocation and keeps the most urgent donation first |
+| `allocationmanager` | Carries out an allocation and keeps the most urgent donation first |
 | `ConsoleView` | The menu, and prints results and lists to the console |
+| `main` | Loads the data and runs the menu, with no decision logic of its own |
 
-Each module has a header in `include/` and a source file in `src/`. `Sorting` is header-only. `main.cpp` is the entry point: it loads the data and runs the menu, with no decision logic of its own.
+Each module has a header in `include/` and a source file in `src/`. `Sorting` is header-only.
 
 Still to come: adding a donation from the console, and one more data structure planned for a later comparison test.
 
@@ -73,7 +74,7 @@ Still to come: adding a donation from the console, and one more data structure p
 Each module has its own small test program that checks it on its own, separate from the rest of the project. A test file builds one module with known inputs and compares the result against expected values. This makes it easy to find which module a bug is in.
 
 ## Limits
-
+- The dataset isi static.
 - Travel times use simulated distances.
 - The program recommends. It does not decide.
 - Adding a donation from the console is not built yet.

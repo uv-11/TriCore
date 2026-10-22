@@ -5,7 +5,7 @@
 #include <vector>
 using namespace std;
 
-// category of food offered or accepted
+// category of food offered oraccepted
 enum FoodType
 {
     COOKED,

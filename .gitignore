@@ -8,5 +8,3 @@ test_all.bat
 compile_flags.txt
 .clangd
 Phase2/data_check
-demo.bat
-run.bat

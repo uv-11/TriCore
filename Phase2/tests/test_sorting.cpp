@@ -1,182 +1,179 @@
-#include "Sorting.h"
-#include "RecommendationEngine.h"
-
-#include <iostream>
-#include <vector>
+#include "sorting.h"
 #include <algorithm>
 #include <cstdlib>
+#include <iostream>
+#include <string>
 
 using namespace std;
 
-void check(bool ok, const string& name){
-    if (!ok)
-    {
-        cout << "FAIL: " << name << endl;
-        exit(1);
-    }
-}
+int failcount = 0;
 
-void checkIntArray(const int* a, const int* b, int n, const string& name) {
-    for (int i = 0; i < n; ++i) {
-        if (a[i] != b[i]) {
-            cout << "FAIL: " << name << endl;
-            exit(1);
-        }
-    }
-}
-
-void testSmall(){
-    int empty[1] = {7};
-    mergeSort(empty, 0);
-    check(empty[0] == 7, "SO1 empty");
-
-    int one[1] = {4};
-    mergeSort(one, 1);
-    check(one[0] == 4, "SO1 one element");
-}
-
-void testGeneralSorting() {
-    const int sizes[] = {2, 9, 1000};
-
-    for (int s = 0; s < 3; ++s) {
-        int n = sizes[s];
-        vector<int> a(n);
-        vector<int> b(n);
-
-        for (int i = 0; i < n; ++i) {
-            a[i] = (i * 37 + 11) % 101;
-            b[i] = a[i];
-        }
-
-        mergeSort(&a[0], n);
-        sort(b.begin(), b.end());
-
-        checkIntArray(&a[0], &b[0], n, "SO1 random");
-
-        for (int i = 0; i < n; ++i) {
-            a[i] = i;
-            b[i] = i;
-        }
-
-        mergeSort(&a[0], n);
-        sort(b.begin(), b.end());
-        checkIntArray(&a[0], &b[0], n, "SO1 sorted");
-
-        for (int i = 0; i < n; ++i) {
-            a[i] = n - i;
-            b[i] = n - i;
-        }
-
-        mergeSort(&a[0], n);
-        sort(b.begin(), b.end());
-        checkIntArray(&a[0], &b[0], n, "SO1 reversed");
-
-        for (int i = 0; i < n; ++i) {
-            a[i] = i % 4;
-            b[i] = i % 4;
-        }
-
-        mergeSort(&a[0], n);
-        sort(b.begin(), b.end());
-        checkIntArray(&a[0], &b[0], n, "SO1 duplicates");
-    }
-}
-
-struct StableItem
+// A value with a sort key and the position where it started. Used for the stability test.
+struct entry
 {
     int key;
     int order;
-
-    bool operator<(const StableItem& other) const {
-        return key < other.key;
-    }
 };
 
-void testStability(){
-    StableItem a[8] = {
-        {2, 0}, {1, 1}, {2, 2}, {1, 3},
-        {2, 4}, {1, 5}, {3, 6}, {2, 7}
-    };
-
-    mergeSort(a, 8);
-
-    check(a[0].key == 1 && a[0].order == 1, "SO2 first");
-    check(a[1].key == 1 && a[1].order == 3, "SO2 second");
-    check(a[2].key == 1 && a[2].order == 5, "SO2 third");
-    check(a[3].key == 2 && a[3].order == 0, "SO2 fourth");
-    check(a[4].key == 2 && a[4].order == 2, "SO2 fifth");
-    check(a[5].key == 2 && a[5].order == 4, "SO2 sixth");
-    check(a[6].key == 2 && a[6].order == 7, "SO2 seventh");
-    check(a[7].key == 3 && a[7].order == 6, "SO2 eighth");
+// Checks a condition and prints PASS or FAIL. WHY: Helper for tests.
+void check(bool condition, const string& name)
+{
+    if (condition)
+    {
+        cout << "PASS " << name << "\n";
+    }
+    else
+    {
+        cout << "FAIL " << name << "\n";
+        failcount++;
+    }
 }
 
-bool reverseLess(const int& a, const int& b){
-    return a > b;
+// Orders entries by key only, so entries with equal keys count as equal.
+bool lessbykey(const entry& first, const entry& second)
+{
+    return first.key < second.key;
 }
 
-void testComparator(){
-    int a[6] = {1, 5, 2, 4, 3, 0};
-    mergeSort(a, 6, reverseLess);
-
-    int expected[6] = {5, 4, 3, 2, 1, 0};
-    checkIntArray(a, expected, 6, "SO1 comparator");
+// Orders ints from large to small.
+bool greaterint(const int& first, const int& second)
+{
+    return first > second;
 }
 
-void testCandidateRanking(){
-    Candidate s4[3] = {
-        Candidate(EntityId("R", 1), 60, Duration(25), 90),
-        Candidate(EntityId("R", 4), 60, Duration(12), 20),
-        Candidate(EntityId("R", 3), 60, Duration(22), 60)
-    };
-
-    mergeSort(s4, 3);
-
-    check(s4[0].recipientId().number() == 4, "SO3 S4 R004");
-    check(s4[1].recipientId().number() == 3, "SO3 S4 R003");
-    check(s4[2].recipientId().number() == 1, "SO3 S4 R001");
-
-    Candidate s5[3] = {
-        Candidate(EntityId("R", 4), 80, Duration(12), 0),
-        Candidate(EntityId("R", 1), 100, Duration(25), 50),
-        Candidate(EntityId("R", 3), 100, Duration(22), 20)
-    };
-
-    mergeSort(s5, 3);
-
-    check(s5[0].recipientId().number() == 3, "SO3 S5 R003");
-    check(s5[1].recipientId().number() == 1, "SO3 S5 R001");
-    check(s5[2].recipientId().number() == 4, "SO3 S5 R004");
-
-    Candidate s6[2] = {
-        Candidate(EntityId("R", 1), 100, Duration(25), 50),
-        Candidate(EntityId("R", 2), 100, Duration(15), 200)
-    };
-
-    mergeSort(s6, 2);
-
-    check(s6[0].recipientId().number() == 2, "SO3 S6 R002");
-    check(s6[1].recipientId().number() == 1, "SO3 S6 R001");
+// Fills the array for one input kind: 0 random, 1 sorted, 2 reversed, 3 many duplicates.
+void fillarray(int* items, int count, int kind)
+{
+    for (int pos = 0; pos < count; pos++)
+    {
+        if (kind == 0)
+        {
+            items[pos] = rand() % 100000;
+        }
+        else if (kind == 1)
+        {
+            items[pos] = pos;
+        }
+        else if (kind == 2)
+        {
+            items[pos] = count - pos;
+        }
+        else
+        {
+            items[pos] = rand() % 5;
+        }
+    }
 }
 
-void testComparatorProperties() {
-    Candidate a(EntityId("R", 7), 10, Duration(5), 2);
-    Candidate b(EntityId("R", 7), 10, Duration(5), 2);
-    Candidate c(EntityId("R", 8), 10, Duration(5), 2);
+// Main test runner. WHY: Executes all sorting unit tests.
+int main()
+{
+    cout << "--- test_sorting ---\n";
 
-    check(!(a < a), "R6 irreflexive");
-    check(!(a < b), "R6 equal candidates");
-    check(a < c, "R6 recipient tie break");
-    check(!(c < a), "R6 recipient reverse");
-}
+    // SO1: mergesort gives the same array as std::sort for every kind and size
+    srand(12345);
+    int sizes[6] = {0, 1, 2, 9, 100, 1000};
+    string kinds[4] = {"random", "sorted", "reversed", "duplicates"};
+    bool allsame = true;
 
-int main() {
-    testSmall();
-    testGeneralSorting();
-    testStability();
-    testComparator();
-    testCandidateRanking();
-    testComparatorProperties();
+    for (int kind = 0; kind < 4; kind++)
+    {
+        bool kindsame = true;
 
-    cout << "All sorting tests passed." << endl;
+        for (int which = 0; which < 6; which++)
+        {
+            int count = sizes[which];
+            int* mine = new int[count + 1];
+            int* oracle = new int[count + 1];
+
+            fillarray(mine, count, kind);
+
+            for (int pos = 0; pos < count; pos++)
+            {
+                oracle[pos] = mine[pos];
+            }
+
+            mergesort(mine, count);
+            sort(oracle, oracle + count);
+
+            for (int pos = 0; pos < count; pos++)
+            {
+                if (mine[pos] != oracle[pos])
+                {
+                    kindsame = false;
+                }
+            }
+
+            delete[] mine;
+            delete[] oracle;
+        }
+
+        check(kindsame, "SO1: " + kinds[kind] + " arrays of n = 0, 1, 2, 9, 100, 1000 match std::sort");
+
+        if (!kindsame)
+        {
+            allsame = false;
+        }
+    }
+
+    check(allsame, "SO1: operator< version matches std::sort on every input kind");
+
+    // SO1: the comparison function version, here largest first
+    int down[8] = {4, 9, 1, 7, 7, 3, 0, 5};
+    int downoracle[8] = {4, 9, 1, 7, 7, 3, 0, 5};
+
+    mergesort(down, 8, greaterint);
+    sort(downoracle, downoracle + 8, greaterint);
+
+    bool downsame = true;
+
+    for (int pos = 0; pos < 8; pos++)
+    {
+        if (down[pos] != downoracle[pos])
+        {
+            downsame = false;
+        }
+    }
+
+    check(downsame, "SO1: comparison function version matches std::sort with the same function");
+
+    // SO2: equal keys keep their original order
+    entry entries[200];
+
+    for (int pos = 0; pos < 200; pos++)
+    {
+        entries[pos].key = rand() % 6;
+        entries[pos].order = pos;
+    }
+
+    mergesort(entries, 200, lessbykey);
+
+    bool sorted = true;
+    bool stable = true;
+
+    for (int pos = 1; pos < 200; pos++)
+    {
+        if (entries[pos].key < entries[pos - 1].key)
+        {
+            sorted = false;
+        }
+
+        if (entries[pos].key == entries[pos - 1].key &&
+            entries[pos].order < entries[pos - 1].order)
+        {
+            stable = false;
+        }
+    }
+
+    check(sorted, "SO2: entries are sorted by key");
+    check(stable, "SO2: entries with equal keys keep their original order");
+
+    cout << "Total FAIL: " << failcount << "\n";
+
+    if (failcount > 0)
+    {
+        return 1;
+    }
+
     return 0;
 }

@@ -48,6 +48,39 @@ int main(int argc, char* argv[])
         // new transaction ids continue after the highest id on file
         transactionidissuer::seed(data.lasttransaction);
 
+        // seed donationidissuer from highest donation id already loaded
+        EntityId highestDonation("DON", 0);
+        for (size_t i = 0; i < data.donations.size(); ++i)
+        {
+            if (highestDonation < data.donations[i].id())
+            {
+                highestDonation = data.donations[i].id();
+            }
+        }
+        donationidissuer::seed(highestDonation);
+
+        // seed donoridissuer from highest donor id already loaded
+        EntityId highestDonor("DN", 0);
+        for (size_t i = 0; i < data.donors.size(); ++i)
+        {
+            if (highestDonor < data.donors[i].id())
+            {
+                highestDonor = data.donors[i].id();
+            }
+        }
+        donoridissuer::seed(highestDonor);
+
+        // seed recipientidissuer from highest recipient id already loaded
+        EntityId highestRecipient("R", 0);
+        for (size_t i = 0; i < data.recipients.size(); ++i)
+        {
+            if (highestRecipient < data.recipients[i].id())
+            {
+                highestRecipient = data.recipients[i].id();
+            }
+        }
+        recipientidissuer::seed(highestRecipient);
+
         // provider gives the travel time and route using dijkstra
         dijkstratraveltime provider(data.network);
         // waiting holds the open donations, most urgent first
@@ -64,7 +97,7 @@ int main(int argc, char* argv[])
         while (running)
         {
             ConsoleView::showMenu();
-            // choice is the typed menu number, 0 to 6, or -1 at end of input
+            // choice is the typed menu number, 0 to 9, or -1 at end of input
             int choice = ConsoleView::readMenu();
 
             if (choice == 1)
@@ -92,19 +125,31 @@ int main(int argc, char* argv[])
             }
             else if (choice == 3)
             {
-                ConsoleView::showDonations(data);
+                ConsoleView::addRecipient(data, files);
             }
             else if (choice == 4)
             {
-                ConsoleView::showRecipients(data);
+                ConsoleView::showDonations(data);
             }
             else if (choice == 5)
             {
-                ConsoleView::showTransactions(data);
+                ConsoleView::showRecipients(data);
             }
             else if (choice == 6)
             {
-                ConsoleView::showAbout();
+                ConsoleView::showTransactions(data);
+            }
+            else if (choice == 7)
+            {
+                ConsoleView::showNetwork(data);
+            }
+            else if (choice == 8)
+            {
+                ConsoleView::showTravelTimesFromDonor(data, provider);
+            }
+            else if (choice == 9)
+            {
+                ConsoleView::showSummary(data);
             }
             else
             {

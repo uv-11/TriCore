@@ -226,7 +226,7 @@ static void readtable(const string& path, const string& name, const string& head
             if ((int)row.fields.size() != columns)
             {
                 stringstream message;
-                message << "expected " << columns << " values but found " << row.fields.size();
+                message << "expected " << columns << " fields but found " << row.fields.size();
                 fail(name, number, message.str());
             }
 
@@ -327,7 +327,7 @@ static void loadedges(const string& path, const string& name, dataset& target, l
 
             if (edge.from == edge.to)
             {
-                fail(name, row.number, "a road cannot start and end at the same location");
+                fail(name, row.number, "a road cannot connect a location to itself");
             }
 
             if (edge.minutes < 1)
@@ -352,7 +352,7 @@ static void loadedges(const string& path, const string& name, dataset& target, l
             if (seen.get(key.str(), earlier))
             {
                 stringstream message;
-                message << where(name, row.number) << "duplicate road " << small << "-"
+                message << where(name, row.number) << "duplicate edge " << small << "-"
                         << large << ", the smaller minutes are kept";
                 warnings.push_back(message.str());
 
@@ -603,7 +603,7 @@ static void warnunconnected(const dataset& source, list<string>& warnings)
         if (!hasdonor)
         {
             stringstream message;
-            message << source.recipients[pos].id().toString() << " (location " << node
+            message << source.recipients[pos].id().toString() << " (node " << node
                     << ") is not connected to any donor; it can never be recommended.";
             warnings.push_back(message.str());
         }
@@ -743,6 +743,94 @@ void datamanager::appendtransaction(const Transaction& entry)
     }
 }
 
+// appends one donation safely using a temp file then replace
+void datamanager::appenddonation(const dataset& source, const Donation& entry)
+{
+    vector<const CsvRecord*> records;
+    bool found = false;
+
+    for (size_t pos = 0; pos < source.donations.size(); pos++)
+    {
+        records.push_back(&source.donations[pos]);
+        if (source.donations[pos].id() == entry.id())
+        {
+            found = true;
+        }
+    }
+
+    if (!found)
+    {
+        records.push_back(&entry);
+    }
+
+    savetable("donations.csv", donationsheader, records);
+}
+
+// stops with a data error when a text would break the comma separated file
+static void requirecsvsafe(const string& what, const string& text)
+{
+    if (text.find(',') != string::npos || text.find('\n') != string::npos ||
+        text.find('\r') != string::npos)
+    {
+        throw DataException("The " + what + " cannot contain a comma or a line break: " + text);
+    }
+}
+
+// appends one donor safely using a temp file then replace
+void datamanager::appenddonor(const dataset& source, const Donor& entry)
+{
+    // checked first, so nothing is written for a bad text
+    requirecsvsafe("donor name", entry.name());
+    requirecsvsafe("donor type", entry.type());
+
+    vector<const CsvRecord*> records;
+    bool found = false;
+
+    for (size_t pos = 0; pos < source.donors.size(); pos++)
+    {
+        records.push_back(&source.donors[pos]);
+        if (source.donors[pos].id() == entry.id())
+        {
+            found = true;
+        }
+    }
+
+    if (!found)
+    {
+        records.push_back(&entry);
+    }
+
+    savetable("donors.csv", donorsheader, records);
+}
+
+// appends one recipient safely using a temp file then replace
+void datamanager::appendrecipient(const dataset& source, const Recipient& entry)
+{
+    // checked first, so nothing is written for a bad text
+    requirecsvsafe("recipient name", entry.name());
+    requirecsvsafe("recipient type", entry.type());
+
+    vector<const CsvRecord*> records;
+    bool found = false;
+
+    for (size_t pos = 0; pos < source.recipients.size(); pos++)
+    {
+        records.push_back(&source.recipients[pos]);
+        if (source.recipients[pos].id() == entry.id())
+        {
+            found = true;
+        }
+    }
+
+    if (!found)
+    {
+        records.push_back(&entry);
+    }
+
+    savetable("recipients.csv", recipientsheader, records);
+}
+
+
 // records the transaction before saving updated donation and recipient data
 void datamanager::commitallocation(const dataset& source, const Transaction& entry)
 {
@@ -859,12 +947,12 @@ void datamanager::recoverfile(const string& filename, list<string>& warnings)
             throw DataException("Cannot recover " + path);
         }
 
-        warnings.push_back(filename + " was restored after an interrupted save.");
+        warnings.push_back(filename + " was recovered from a .tmp file.");
     }
     else if (hasmain && hastemp)
     {
         remove(temp.c_str());
-        warnings.push_back("An unfinished save of " + filename + " was discarded.");
+        warnings.push_back("A stale .tmp file for " + filename + " was discarded.");
     }
 }
 

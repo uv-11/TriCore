@@ -8,3 +8,9 @@ test_all.bat
 compile_flags.txt
 .clangd
 Phase2/data_check
+manual_run_final.txt
+manual_run_output.txt
+
+demo.bat
+run.bat
+verify.bat

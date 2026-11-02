@@ -50,6 +50,15 @@ public:
     // adds one line to the transactions file
     void appendtransaction(const Transaction& entry);
 
+    // saves a new donation safely using a temp file
+    void appenddonation(const dataset& source, const Donation& entry);
+
+    // saves a new donor safely using a temp file
+    void appenddonor(const dataset& source, const Donor& entry);
+
+    // saves a new recipient safely using a temp file
+    void appendrecipient(const dataset& source, const Recipient& entry);
+
     // saves a new allocation and its updated records
     void commitallocation(const dataset& source, const Transaction& entry);
 

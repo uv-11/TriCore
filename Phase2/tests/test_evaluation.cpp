@@ -35,38 +35,38 @@ void check(bool condition, const string& name)
     }
 }
 
-// Returns the recipient number of the best candidate, or 0 if there is none.
-int toppick(const recommendationresult& found)
+// Returns the recipient number of the best Candidate, or 0 if there is none.
+int toppick(const RecommendationResult& found)
 {
-    if (found.candidates.empty())
+    if (found.candidates().empty())
     {
         return 0;
     }
 
-    return found.candidates[0].recipientid().number();
+    return found.candidates()[0].recipientId().number();
 }
 
-// Ranks the candidates again as if every travel time were 0, and returns the best one.
-int toppickwithouttravel(const recommendationresult& found)
+// Ranks the Candidates again as if every travel time were 0, and returns the best one.
+int toppickwithouttravel(const RecommendationResult& found)
 {
-    int count = (int)found.candidates.size();
+    int count = (int)found.candidates().size();
 
     if (count == 0)
     {
         return 0;
     }
 
-    candidate* items = new candidate[count];
+    Candidate* items = new Candidate[count];
 
     for (int pos = 0; pos < count; pos++)
     {
-        items[pos] = candidate(found.candidates[pos].recipientid(),
-                               found.candidates[pos].potentialacceptance(), Duration(0),
-                               found.candidates[pos].unusedcapacity());
+        items[pos] = Candidate(found.candidates()[pos].recipientId(),
+                               found.candidates()[pos].potentialAcceptance(), Duration(0),
+                               found.candidates()[pos].unusedCapacity());
     }
 
     mergesort(items, count);
-    int best = items[0].recipientid().number();
+    int best = items[0].recipientId().number();
     delete[] items;
     return best;
 }
@@ -161,22 +161,22 @@ int main()
                     Donation donation(EntityId("DON", 1), EntityId("DN", donor + 1), foods[food],
                                       quantities[amount], quantities[amount], usablegrid[which],
                                       PENDING);
-                    recommendationresult full = recommend(donation, base.recipients, truth);
-                    recommendationresult baseline = recommend(donation, base.recipients, guess);
+                    RecommendationResult full = recommend(donation, base.recipients, truth);
+                    RecommendationResult baseline = recommend(donation, base.recipients, guess);
                     scenarios++;
 
-                    for (size_t pos = 0; pos < full.candidates.size(); pos++)
+                    for (size_t pos = 0; pos < full.candidates().size(); pos++)
                     {
-                        int number = full.candidates[pos].recipientid().number();
+                        int number = full.candidates()[pos].recipientId().number();
                         const Recipient& chosen = base.recipients[number - 1];
 
-                        if (checkfeasibility(chosen, donation, truth[chosen.nodeId()]) != OK)
+                        if (checkFeasibility(chosen, donation, truth[chosen.nodeId()]) != OK)
                         {
                             constraintsheld = false;
                         }
                     }
 
-                    if (full.candidates.empty())
+                    if (full.candidates().empty())
                     {
                         nofeasible++;
                     }
@@ -190,7 +190,7 @@ int main()
                         }
                     }
 
-                    if (!baseline.candidates.empty())
+                    if (!baseline.candidates().empty())
                     {
                         b1hastop++;
                         int number = toppick(baseline);
@@ -201,12 +201,12 @@ int main()
                             b1unreachable++;
                         }
 
-                        if (!full.candidates.empty() && toppick(full) != number)
+                        if (!full.candidates().empty() && toppick(full) != number)
                         {
                             b1differs++;
                         }
                     }
-                    else if (!full.candidates.empty())
+                    else if (!full.candidates().empty())
                     {
                         b1nothing++;
                     }
@@ -225,7 +225,7 @@ int main()
     cout << "  B1 top pick differs from the full system     " << b1differs << "\n\n";
 
     check(scenarios == 192, "E2: 192 scenarios");
-    check(constraintsheld, "SC2: no ranked candidate fails checkfeasibility in any of the 192 scenarios");
+    check(constraintsheld, "SC2: no ranked Candidate fails checkfeasibility in any of the 192 scenarios");
     check(nofeasible == 16 && somefeasible == 176, "E2: 16 scenarios without a feasible recipient, 176 with");
     check(travelchanges == 14, "E2: the travel criterion changes the rank-1 pick in 14 of 176");
     check(b1hastop == 180 && b1unreachable == 59, "E2: B1 gives a top pick in 180 and 59 of them cannot be reached in time");

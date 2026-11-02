@@ -256,7 +256,7 @@ int main()
               "DON001,DN002,COOKED,80,70,60,PARTIAL\n"
               "DON002,DN002,COOKED,80,80,9,PENDING\n");
     string tampered = loaderror();
-    check(contains(tampered, "Invariant I3"), "P2: tampered quantities are reported as I3");
+    check(contains(tampered, "Data problem: donation"), "P2: tampered quantities are reported");
     check(contains(tampered, "DON001"), "P2: the message names the donation");
 
     // P3: the next transaction id continues after a restart
@@ -419,7 +419,7 @@ int main()
     // V1 to V8: each rule reports file, line and rule number
     fresh();
     writefile(PREFIX + "donors.csv", donorstext() + "DN002,Copy,HOTEL,1\n");
-    check(contains(loaderror(), "donors.csv line 4") && contains(loaderror(), "(V1)"),
+    check(contains(loaderror(), "donors.csv line 4") && contains(loaderror(), "is used twice"),
           "V1: a duplicate donor id is reported");
 
     fresh();
@@ -428,29 +428,29 @@ int main()
 
     fresh();
     writefile(PREFIX + "donations.csv", replaceonce(donationstext(), "DN002", "DN009"));
-    check(contains(loaderror(), "(V2)") && contains(loaderror(), "DN009"),
+    check(contains(loaderror(), "is not in donors.csv") && contains(loaderror(), "DN009"),
           "V2: a donation with an unknown donor is reported");
 
     fresh();
     writefile(PREFIX + "recipients.csv", replaceonce(recipientstext(), ",1,1,5", ",1,1,99"));
-    check(contains(loaderror(), "recipients.csv line 2") && contains(loaderror(), "(V2)"),
+    check(contains(loaderror(), "recipients.csv line 2") && contains(loaderror(), "this location is not in the map file"),
           "V2: a recipient on a node outside the graph is reported");
 
     fresh();
     writefile(PREFIX + "donations.csv", replaceonce(donationstext(), "80,80,60", "80,90,60"));
-    check(contains(loaderror(), "(V3)"), "V3: remaining above original is reported");
+    check(contains(loaderror(), "wrong quantities"), "V3: remaining above original is reported");
 
     fresh();
     writefile(PREFIX + "donations.csv", replaceonce(donationstext(), "80,80,60", "0,0,60"));
-    check(contains(loaderror(), "(V3)"), "V3: original quantity 0 is reported");
+    check(contains(loaderror(), "wrong quantities"), "V3: original quantity 0 is reported");
 
     fresh();
     writefile(PREFIX + "donations.csv", replaceonce(donationstext(), "80,80,60", "80,80,0"));
-    check(contains(loaderror(), "(V4)"), "V4: usable minutes 0 is reported");
+    check(contains(loaderror(), "usable minutes must be at least 1"), "V4: usable minutes 0 is reported");
 
     fresh();
     writefile(PREFIX + "recipients.csv", replaceonce(recipientstext(), "SHELTER,150", "SHELTER,-5"));
-    check(contains(loaderror(), "(V4)"), "V4: a negative capacity is reported");
+    check(contains(loaderror(), "available capacity cannot be below 0"), "V4: a negative capacity is reported");
 
     fresh();
     writefile(PREFIX + "donations.csv", replaceonce(donationstext(), "COOKED,80,80,60", "PIZZA,80,80,60"));
@@ -467,23 +467,23 @@ int main()
 
     fresh();
     writefile(PREFIX + "donations.csv", replaceonce(donationstext(), "80,80,60,PENDING", "80,70,60,PENDING"));
-    check(contains(loaderror(), "(V6)"), "V6: a status that does not match the quantities is reported");
+    check(contains(loaderror(), "the status does not fit the quantities"), "V6: a status that does not match the quantities is reported");
 
     fresh();
     writefile(PREFIX + "graph_nodes.csv", replaceonce(nodestext(), "\n1,DN002", "\n2,DN002"));
-    check(contains(loaderror(), "(V7)"), "V7: node ids that are not 0, 1, 2 ... are reported");
+    check(contains(loaderror(), "map locations must be numbered 0, 1, 2"), "V7: node ids that are not 0, 1, 2 ... are reported");
 
     fresh();
     writefile(PREFIX + "graph_edges.csv", edgestext() + "3,3,5\n");
-    check(contains(loaderror(), "(V7)") && contains(loaderror(), "itself"), "V7: a self-loop is reported");
+    check(contains(loaderror(), "cannot connect a location to itself"), "V7: a self-loop is reported");
 
     fresh();
     writefile(PREFIX + "graph_edges.csv", edgestext() + "0,99,5\n");
-    check(contains(loaderror(), "(V7)"), "V7: an edge to a missing node is reported");
+    check(contains(loaderror(), "a road ends at a location that is not in the map file"), "V7: an edge to a missing node is reported");
 
     fresh();
     writefile(PREFIX + "graph_edges.csv", edgestext() + "0,1,0\n");
-    check(contains(loaderror(), "(V7)") && contains(loaderror(), "at least 1 minute"),
+    check(contains(loaderror(), "a road needs at least 1 minute"),
           "V7: an edge with 0 minutes is reported");
 
     fresh();
@@ -507,7 +507,7 @@ int main()
 
     fresh();
     writefile(PREFIX + "transactions.csv", transactionstext() + "T001,DON777,R001,5,9\n");
-    check(contains(loaderror(), "(V8)"), "V8: a transaction with an unknown donation is reported");
+    check(contains(loaderror(), "the donation or recipient is not in the files"), "V8: a transaction with an unknown donation is reported");
 
     // Boundary cases: empty, header-only and missing files
     fresh();
@@ -546,18 +546,18 @@ int main()
     broken.transactions.push_back(Transaction(EntityId("T", 2), EntityId("DON", 1), EntityId("R", 3), 0, 9));
     broken.transactions.push_back(Transaction(EntityId("T", 1), EntityId("DON", 1), EntityId("R", 3), 0, 9));
     vector<string> sixth = manager.checkinvariants(broken);
-    check(sixth.size() == 1 && contains(sixth[0], "I6"), "invariants: ids that do not increase are I6");
+    check(sixth.size() == 1 && contains(sixth[0], "Data problem: transaction"), "invariants: ids that do not increase are reported");
 
     dataset orphan = memory;
     orphan.transactions.push_back(Transaction(EntityId("T", 1), EntityId("DON", 99), EntityId("R", 3), 0, 9));
     vector<string> fifth = manager.checkinvariants(orphan);
-    check(!fifth.empty() && contains(fifth[0], "I5"), "invariants: an unknown donation is I5");
+    check(!fifth.empty() && contains(fifth[0], "Data problem: transaction"), "invariants: an unknown donation is reported");
 
     dataset spent = memory;
     spent.donations[0].allocateQuantity(10);
     vector<string> third2 = manager.checkinvariants(spent);
-    check(third2.size() == 1 && contains(third2[0], "I3"),
-          "invariants: quantity gone without a transaction is I3");
+    check(third2.size() == 1 && contains(third2[0], "Data problem: donation"),
+          "invariants: quantity gone without a transaction is reported");
 
     removefixture(PREFIX);
 

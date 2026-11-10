@@ -1,0 +1,43 @@
+// gui.rc: the resources of the program: the manifest and the version information (and, from version 2.5, the icon; version 2.7).
+// The program has no dialogs: every page is made in code.
+
+#include <windows.h>
+#include <commctrl.h>
+#include "../include/resource.h"
+
+// The icon of the program (the first icon resource is the one that Explorer and the taskbar show for the exe file).
+// The file app.ico is copied next to the build files by CMake, like the manifest.
+IDI_APP ICON "app.ico"
+
+// The manifest switches on the new look of the controls (Common Controls 6) and the dpi awareness.
+// The file app.manifest is copied next to the build files by CMake. 24 is the resource type RT_MANIFEST.
+1 24 "app.manifest"
+
+// The version information that Windows shows in the file properties (keep in step with the version of the program).
+VS_VERSION_INFO VERSIONINFO
+FILEVERSION 3,0,0,0
+PRODUCTVERSION 3,0,0,0
+FILEFLAGSMASK 0x3fL
+FILEFLAGS 0x0L
+FILEOS 0x40004L
+FILETYPE 0x1L
+FILESUBTYPE 0x0L
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "040904B0"
+        BEGIN
+            VALUE "CompanyName", "CommunityBridge student project"
+            VALUE "FileDescription", "CommunityBridge - surplus food to the recipients who can take it"
+            VALUE "FileVersion", "3.0.0.0"
+            VALUE "InternalName", "communitybridge_gui"
+            VALUE "OriginalFilename", "communitybridge_gui.exe"
+            VALUE "ProductName", "CommunityBridge"
+            VALUE "ProductVersion", "3.0.0.0"
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x0409, 1200
+    END
+END

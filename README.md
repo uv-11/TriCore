@@ -145,7 +145,7 @@ A donation can be split. If the coordinator gives 40 of 60 portions to the first
 0. Exit
 ```
 
-- **Add a donation** lists the donors. Pick one by number or id, or type `n` to create a new donor first.
+- **Add a donation** lists the donors. Pick one by number or id or type `n` to create a new donor first.
 - **Add a recipient** asks for name, type, accepted food types, capacity, whether it accepts donations and can collect food, and a location on the map.
 - Typing `q` at any question cancels and saves nothing. Nothing is saved until every question is answered.
 - New donors and recipients use a location that is already on the map. The program warns if that location is not connected to any recipient or donor.
@@ -156,7 +156,7 @@ One window. A list on the left switches the pages. Nothing opens in a separate w
 
 | Role | Pages |
 |------|-------|
-| Coordinator | Home, Donations, Offers, Recipients, Transactions, Summary, and a Match page for one donation |
+| Coordinator | Home, Donations, Offers, Recipients, Transactions, Summary and a Match page for one donation |
 | Donor | Home, My donations, Offers, Given out, Add donation |
 | Recipient | Home, Incoming offers, Past offers, Received food, My details |
 
@@ -204,7 +204,7 @@ The decision part receives only a list of travel times. It does not care how the
 |------|--------------|--------------------|
 | `Duration` | A length of time in minutes, with a safe value for "cannot be reached" | Adding two times never overflows, and unreachable stays unreachable |
 | `EntityId` | Ids such as `DN001` and `DON012` | One place decides the format, the order and the next number |
-| `Exceptions` | Error types for bad text, bad data and wrong use | The program can tell a data problem from a coding mistake |
+| `Exceptions` | Error types for bad text bad data and wrong use | The program can tell a data problem from a coding mistake |
 | `Models` | Donor, recipient, donation and transaction records | The rest of the program talks about records, not text lines |
 | `Datamanager` | Loads, checks and saves the data files, and holds the data in memory | All file work is in one place |
 | `graph` | The road map, stored as a list of roads for each location | Only roads that exist take space |
@@ -274,7 +274,6 @@ All data is in comma separated files. The first line of each file is a header th
 - **Donation status:** `PENDING` (nothing given yet), `PARTIAL`, `COMPLETED` (everything given), `CLOSED` (closed with food left over).
 - **Checks at start-up:** the header line, that ids are unique, that every reference exists, that quantities and statuses agree, and that every road joins two real locations. A problem stops the program with a message that names the file and the line.
 - **Safe saving:** every save goes through a temporary file, so an interrupted save does not damage the last good data.
-- **Names** cannot contain a comma, because the files are comma separated.
 
 `Phase2/data` is a larger sample dataset: 12 donors, 26 recipients, 46 donations, 20 locations and 26 roads. It has edge cases on purpose: a very large donation, a donation that practically never expires, a case where the travel time equals the usable time exactly, and parts of the map that are cut off from the rest. The travel times are **simulated**, not real map data.
 
@@ -320,15 +319,7 @@ run.bat  demo.bat     build and run the console program
 
 ---
 
-## 9. Why it is built this way
-
-- **Screens never decide.** All rules, ranking and allocation live below the screens, so the console and the Windows app give the same answers.
-- **A fixed order for everything.** Rules, ranking keys and urgency all have a fixed order, so results can be repeated and checked.
-- **Nothing changes unless every check passes.** An allocation either happens completely or not at all.
-- **Plain messages.** Everything the user reads is in simple words, never internal codes.
-- **The finished console program stays untouched.** The Windows app was added next to it and reads its source files without changing them.
-
-## 10. Limits and next steps
+## 9. Limits and next steps
 
 **Limits**
 

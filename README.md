@@ -1,35 +1,136 @@
 # CommunityBridge
 
-A C++ console program that helps a coordinator decide where surplus food should go.
+**Send surplus food to the recipient who can take it in time.**
 
-Food is often wasted while nearby organisations go without it. CommunityBridge takes a donation, checks which recipients can actually receive it, ranks them, and recommends the best options. The coordinator makes the final choice. The program only recommends.
+CommunityBridge is a C++ program for a food donation coordinator. A donor has food that will spoil soon. The program finds which recipients can really take it, shows them in the best order, and explains why every other recipient was left out. The coordinator makes the final choice. The program only recommends.
 
-## Current stage
+It comes in two forms that share the same logic:
 
-**Phase 2: working console program.** The whole workflow runs from start to end. The program loads and checks the data files, picks the most urgent donation, works out travel times over a road map, applies the feasibility rules, ranks the recipients, lets the coordinator allocate the food, and saves every change. New records can be added from the program too: a donation, a donor (while adding a donation) and a recipient.
+| Form | What it is | Start it with |
+|------|------------|---------------|
+| Console program | A menu in the terminal | `.\demo.bat` |
+| Windows app | One window with a screen for each kind of user | `Phase3\run_gui.bat` |
 
-## How it works
+---
 
-1. **Donation.** A donor offers some food, with a quantity, a pickup location on the map and a usable time in minutes. Waiting donations are ordered by urgency: the one with the least usable time comes first.
-2. **Travel time.** A shortest-path search (Dijkstra's algorithm) finds the travel time and the route from the donor's location to every other location on a weighted road map.
-3. **Feasibility check.** Every recipient is checked against six rules, in this order. The first rule a recipient fails is recorded as its reason, so the coordinator can see why it was rejected.
+## 1. The idea in one minute
 
-| Reason | Meaning |
-|--------|---------|
-| `NOT_ACCEPTING` | The recipient is not accepting donations right now |
-| `FOOD_INCOMPATIBLE` | The recipient does not take this type of food |
-| `NO_CAPACITY` | The recipient has no room left |
-| `NO_PICKUP` | The recipient cannot collect the food |
-| `UNREACHABLE` | No road connects the recipient to the donor |
-| `TOO_FAR` | The travel time is more than the usable time of the food (equal is allowed) |
+Food is often wasted while nearby organisations go without it. The hard part is not finding a recipient. It is finding one that:
 
-4. **Ranking.** The recipients that pass are ranked with four keys, in this order: more food accepted (the smaller of what is left of the donation and what the recipient can take), shorter travel time, less unused capacity, smaller recipient number.
-5. **Coordinator's choice.** The ranked list is shown with the route to each recipient, and the rejected recipients are shown with their reasons. The coordinator types a candidate number and a quantity, or `c` to close the donation. A donation can be split between several recipients, and the list is ranked again after each allocation.
-6. **Allocation and record.** The checks run again, the donation and the recipient are updated, a transaction is recorded and the files are saved. If nobody can take the food, or the coordinator closes the donation, the food that is left is recorded as wasted.
+1. is open to donations and takes this kind of food,
+2. has room,
+3. can collect the food,
+4. and can be reached **before the food spoils**.
 
-Travel times come from a weighted graph of locations. The distances in the sample data are **simulated**, not real map data.
+Doing this by hand for many donations is slow and easy to get wrong. CommunityBridge does the checking in a fixed order, finds real travel times over a road map, and keeps a record of every decision.
 
-## Menu
+Two promises the program keeps:
+
+- **Every rejection has a reason.** The coordinator never sees "no" without a why.
+- **Same data, same answer.** The ranking order is fixed, so results can be repeated and checked.
+
+## 2. Who uses it
+
+| Role | What they do |
+|------|--------------|
+| Coordinator | Looks at waiting donations, sees the ranked recipients, and decides who gets how much |
+| Donor | Gives food (a hotel, caterer or market) and follows what happened to it |
+| Recipient | Receives food (a shelter, food bank or kitchen) and keeps its own details up to date |
+
+In the console program one person plays the coordinator. In the Windows app each role has its own screens.
+
+## 3. See it work in three minutes
+
+```
+.\demo.bat                                         console program on a fresh copy of the data
+Phase3\run_gui.bat                                 Windows app
+cmd /c "Phase2\tests\test_all.bat nopause"         console tests
+ctest --test-dir Phase3\build --output-on-failure  Windows app tests (after run_gui.bat has built it)
+```
+
+In the console menu choose `1`. The program takes the most urgent donation and shows a result like this:
+
+> **DON001** from a banquet hall: 60 portions of cooked food, usable for 12 minutes
+
+| Rank | Recipient | Accepts | Travel | Spare room | Route |
+|------|-----------|---------|--------|------------|-------|
+| 1 | R013 | 60 | 8 min | 190 | 0 to 2 |
+| 2 | R004 | 60 | 12 min | 20 | 0 to 8 |
+
+R013 ranks first because both take all 60 portions, and R013 is closer. Every other recipient appears in a second list with its reason. Then the coordinator types a rank and a quantity, or `c` to close the donation.
+
+---
+
+## 4. How a donation travels
+
+```
+ load and check the files
+            |
+            v
+ open donations wait in an urgency queue  (least usable time first)
+            |
+            v
+ travel time from the donor's location to every place on the map  (Dijkstra)
+            |
+            v
+ six feasibility rules for every recipient  (first failure is the reason)
+            |
+            v
+ rank the recipients that pass  (four keys)
+            |
+            v
+ coordinator chooses a recipient and a quantity, or closes the donation
+            |
+            v
+ checks run again, then the donation, the recipient and a transaction are saved
+            |
+            +--> food left? go back to the ranking step, with the new numbers
+```
+
+### The six rules (in this order)
+
+| # | Reason | Meaning |
+|---|--------|---------|
+| 1 | `NOT_ACCEPTING` | The recipient is not taking donations right now |
+| 2 | `FOOD_INCOMPATIBLE` | The recipient does not take this type of food |
+| 3 | `NO_CAPACITY` | The recipient has no room left |
+| 4 | `NO_PICKUP` | The recipient cannot collect the food |
+| 5 | `UNREACHABLE` | No road connects the recipient to the donor |
+| 6 | `TOO_FAR` | The travel time is more than the usable time (equal is allowed) |
+
+The order matters. A recipient that fails rule 2 is never shown as unreachable, even if it also is.
+
+### The four ranking keys (in this order)
+
+1. More food accepted (the smaller of what is left of the donation and what the recipient can take)
+2. Shorter travel time
+3. Less unused capacity
+4. Smaller recipient number
+
+### Worked example: DON001 on the sample data
+
+The same donation as above, 60 portions of cooked food with 12 usable minutes. One recipient for each rule:
+
+| Recipient | Result | Why |
+|-----------|--------|-----|
+| R017 | Rejected `NOT_ACCEPTING` | It switched donations off |
+| R002 | Rejected `FOOD_INCOMPATIBLE` | It takes packaged, produce and bakery only |
+| R020 | Rejected `NO_CAPACITY` | Its capacity is 0 |
+| R021 | Rejected `NO_PICKUP` | It cannot collect food |
+| R024 | Rejected `UNREACHABLE` | It sits in a part of the map with no road to any donor |
+| R003 | Rejected `TOO_FAR` | 22 minutes of travel against 12 usable |
+| R013 | Ranked 1 | 8 minutes, all 60 portions fit |
+| R004 | Ranked 2 | 12 minutes, exactly the usable time, so it still passes |
+
+### Partial allocation
+
+A donation can be split. If the coordinator gives 40 of 60 portions to the first recipient, the list is ranked again for the 20 that are left, with the new capacity of that recipient. When nothing is left the donation is `COMPLETED`. If it is closed with food left over, that food is recorded as wasted.
+
+---
+
+## 5. The two programs
+
+### Console menu
 
 ```
 1. Process the most urgent donation
@@ -44,14 +145,119 @@ Travel times come from a weighted graph of locations. The distances in the sampl
 0. Exit
 ```
 
-- **Add a donation** lists the donors. The coordinator picks one by number or by id, or types `n` to create a new donor first.
-- **Add a recipient** asks for the name, type, accepted food types, capacity, whether it accepts donations and can collect food, and its location on the map.
+- **Add a donation** lists the donors. Pick one by number or id, or type `n` to create a new donor first.
+- **Add a recipient** asks for name, type, accepted food types, capacity, whether it accepts donations and can collect food, and a location on the map.
+- Typing `q` at any question cancels and saves nothing. Nothing is saved until every question is answered.
 - New donors and recipients use a location that is already on the map. The program warns if that location is not connected to any recipient or donor.
-- Typing `q` at any question cancels and saves nothing. Nothing is saved until every question has been answered.
-- Ids are given by the program (`DN`, `R`, `DON` or `T` followed by a number), so an id is never repeated.
-- **Show summary** shows the total quantity offered, allocated, wasted and still open, the allocated quantity for each food type, and a short description of the program.
 
-## Data files
+### Windows app
+
+One window. A list on the left switches the pages. Nothing opens in a separate window. The look is light and plain on purpose.
+
+| Role | Pages |
+|------|-------|
+| Coordinator | Home, Donations, Offers, Recipients, Transactions, Summary, and a Match page for one donation |
+| Donor | Home, My donations, Offers, Given out, Add donation |
+| Recipient | Home, Incoming offers, Past offers, Received food, My details |
+
+Each action lives in exactly one place. For example a recipient changes its details only on My details.
+
+**Offers.** In the Windows app the coordinator does not allocate food directly. The coordinator sends an **offer**, and the recipient accepts or declines.
+
+```
+Coordinator sends an offer              ->  PENDING
+PENDING, recipient accepts              ->  ACCEPTED   (allocation runs, transaction saved)
+PENDING, recipient declines             ->  DECLINED   (not offered this donation again)
+PENDING, coordinator withdraws
+         or the donation is closed      ->  WITHDRAWN
+```
+
+Offers are soft. Nothing is reserved while an offer waits, so accepting runs the checks again. An old offer that no longer fits fails with a clear message and the data stays correct. Food that is already offered is shown as "already offered", so the same food is not offered twice.
+
+The Windows app compiles the console program's source files directly. Both programs therefore use exactly the same rules, and the app never changes the console code.
+
+---
+
+## 6. How the code is organised
+
+### Building blocks, from bottom to top
+
+Each part uses only the parts below it. The screens make no decisions.
+
+```
+Screens          ConsoleView + main        |   Windows app pages
+                                           |   Workflow  (offers, queries, tables)
+Changes          allocationmanager         (allocate, close, urgency order, new ids)
+Decisions        RecommendationEngine      (six rules and the ranking)
+Travel time      traveltime                (Dijkstra and routes)
+Data             Datamanager               (load, check, save)
+Structures       graph, priorityqueue, intstack, intqueue, hashindex, Sorting
+Records          Models                    (donor, recipient, donation, transaction)
+Basics           Duration, EntityId, Exceptions
+```
+
+The decision part receives only a list of travel times. It does not care how they were found, so the travel-time method can change without touching the rules.
+
+### What each file does and why it exists
+
+| File | What it does | Why it is separate |
+|------|--------------|--------------------|
+| `Duration` | A length of time in minutes, with a safe value for "cannot be reached" | Adding two times never overflows, and unreachable stays unreachable |
+| `EntityId` | Ids such as `DN001` and `DON012` | One place decides the format, the order and the next number |
+| `Exceptions` | Error types for bad text, bad data and wrong use | The program can tell a data problem from a coding mistake |
+| `Models` | Donor, recipient, donation and transaction records | The rest of the program talks about records, not text lines |
+| `Datamanager` | Loads, checks and saves the data files, and holds the data in memory | All file work is in one place |
+| `graph` | The road map, stored as a list of roads for each location | Only roads that exist take space |
+| `priorityqueue` | Gives the most urgent item first | Used for the urgency order and for Dijkstra |
+| `intstack` | Builds a route from the Dijkstra result | The path comes out backwards, a stack turns it around |
+| `intqueue` | A first-in first-out list of numbers | Used by the tests to compare arrival order with urgency order |
+| `hashindex` | Finds a donor, recipient or donation by its id | A direct jump instead of searching the whole list |
+| `traveltime` | Shortest travel time and route between locations, plus two simple estimates | The estimates exist so the tests can compare them with the real method |
+| `RecommendationEngine` | The six rules and the ranking | The decision logic can be tested without any screen |
+| `Sorting` | Merge sort, used to rank the recipients | The same input always gives the same order |
+| `allocationmanager` | Carries out an allocation, closes donations, keeps the urgency order, gives out new ids | The only part that changes donation and recipient numbers |
+| `ConsoleView` | Every screen and question of the console program | Keeps typing and printing out of the logic |
+| `main` | Starts the program, loads the data and runs the menu | Contains no decisions |
+
+### The Windows app code (`Phase3`)
+
+| Group | What it does |
+|-------|--------------|
+| Offers | Offer records, the offers file, and the send, accept, decline, withdraw and close steps (`Workflow`) |
+| Queries and tables | Pick the right rows for each role and turn them into text tables for the lists |
+| Text tools | Keep screen text plain and rewrite start-up warnings in simple words |
+| Recipient details | Save a recipient's own capacity and flags safely |
+| Window and pages | The main window, the sidebar and the pages of each role. Pages only read input, call the steps above and show the result |
+
+### Data structures
+
+The project is also a study of core data structures, so the main ones are built from scratch instead of using the standard library.
+
+| Structure | Used for | Why this one |
+|-----------|----------|--------------|
+| Min-heap priority queue | Urgency order, Dijkstra | The smallest item is always at the front |
+| Linked-list graph | The road map | Stores only the roads that exist |
+| Stack | Route display | Reverses the path from Dijkstra |
+| Hash index | Finding records by id | Fast lookup without searching |
+| Merge sort | Ranking recipients | Same result every time |
+| Circular queue | Arrival-order comparison in the tests | Not needed by the main program |
+
+### Where to start reading
+
+1. `main.cpp` shows the menu loop.
+2. `ConsoleView.cpp`, function `processDonation`, shows the whole flow for one donation.
+3. `RecommendationEngine.cpp` holds the six rules and the ranking.
+4. `traveltime.cpp` holds Dijkstra.
+5. `allocationmanager.cpp` holds the allocation checks.
+6. `Datamanager.cpp` holds loading, checking and saving.
+
+For the Windows app: start with `Workflow`, then open one page file.
+
+---
+
+## 7. The data
+
+All data is in comma separated files. The first line of each file is a header that must match exactly.
 
 | File | What it holds |
 |------|---------------|
@@ -61,92 +267,81 @@ Travel times come from a weighted graph of locations. The distances in the sampl
 | `transactions.csv` | Every allocation: donation, recipient, quantity and travel minutes |
 | `graph_nodes.csv` | The locations on the map: number, label and coordinates |
 | `graph_edges.csv` | The roads between locations, with travel minutes |
+| `offers.csv` | Windows app only: every offer and its state. It appears when the first offer is saved |
 
-A donation is `PENDING` (nothing given yet), `PARTIAL`, `COMPLETED` (everything given) or `CLOSED` (closed with food left over).
+- **Ids** are a prefix and a number: `DN001` donor, `R001` recipient, `DON001` donation, `T001` transaction, `OFF001` offer. The program gives out new ids, so an id is never repeated.
+- **Food types:** `COOKED`, `PACKAGED`, `PRODUCE`, `BAKERY`.
+- **Donation status:** `PENDING` (nothing given yet), `PARTIAL`, `COMPLETED` (everything given), `CLOSED` (closed with food left over).
+- **Checks at start-up:** the header line, that ids are unique, that every reference exists, that quantities and statuses agree, and that every road joins two real locations. A problem stops the program with a message that names the file and the line.
+- **Safe saving:** every save goes through a temporary file, so an interrupted save does not damage the last good data.
+- **Names** cannot contain a comma, because the files are comma separated.
 
-The program checks every file when it starts: the header line, that ids are unique, that every reference exists, and that quantities and statuses agree. If something is wrong it stops with a message that names the file and the line. Every save goes through a temporary file, so an interrupted save does not damage the last good data.
+`Phase2/data` is a larger sample dataset: 12 donors, 26 recipients, 46 donations, 20 locations and 26 roads. It has edge cases on purpose: a very large donation, a donation that practically never expires, a case where the travel time equals the usable time exactly, and parts of the map that are cut off from the rest. The travel times are **simulated**, not real map data.
 
-`Phase2/data` holds a larger sample dataset with edge cases on purpose: a very large donation, a donation that practically never expires, a case where the travel time equals the usable time exactly, and parts of the map that are cut off from the rest.
+---
 
-## Data structures
+## 8. Build, run and test
 
-The project is also a study of core data structures, so the main ones are written by hand instead of taken from the standard library:
-
-- priority queue (min-heap), used for the urgency order and for the shortest-path search
-- stack, used to build a route
-- queue (built and tested, the main program does not need it)
-- hash index, used to find a record by its id
-- merge sort, used to rank the recipients
-- graph with shortest-path search
-
-## Requirements
-
-- A C++ compiler such as g++ (MinGW on Windows), with C++17
-- No external libraries
-
-## Running
+**You need:** Windows, g++ (MinGW) with C++17. CMake is needed for the Windows app only. No other libraries.
 
 ```
-.\demo.bat
-.\run.bat
-cmd /c "Phase2\tests\test_all.bat nopause"
+.\demo.bat                  build the console program, run it on a fresh copy of the data
+.\run.bat                   build it and run it on Phase2\data, so every change is saved there
+.\run.bat Phase2\data_check use a different data folder
+Phase3\run_gui.bat          build the Windows app and start it on Phase3\data
+Phase3\reset_data.bat       put the sample data back for the Windows app
+Phase3\make_dist.bat        build a packaged copy of the app with its own data
+Phase3\create_desktop_shortcut.bat   put an app icon on the Desktop (remove_desktop_shortcut.bat removes it)
 ```
 
-- `demo.bat` builds the program and runs it on a fresh copy of the sample data, so the real data is never changed.
-- `run.bat` builds the program and runs it on `Phase2\data`, so every change is saved there. A different data folder can be given: `.\run.bat Phase2\data_check`.
-- `test_all.bat` builds and runs every test and prints a summary.
-
-## Folder layout
+**Tests.** Each part has its own small test program. A test builds one part with known inputs and compares the result with the expected one, so a failing test points to the part that broke.
 
 ```
-Phase2/
-  data/       sample CSV files
-  include/    header files
-  src/        source files
-  tests/      test programs and the test runner
-run.bat       build and run the program
-demo.bat      build and run on a fresh copy of the data
+cmd /c "Phase2\tests\test_all.bat nopause"          console parts
+ctest --test-dir Phase3\build --output-on-failure   Windows app parts
 ```
 
-## Code files
+The tests cover the rules, the ranking, the shortest paths, loading and saving, the console screens with typed answers, the Windows app steps and pages, and the larger sample dataset. One evaluation test compares the real travel times with a straight-line estimate and with no travel check at all, over a grid of scenarios. The Windows app also has built-in check modes that walk every page at three window sizes without clicking.
 
-| File | What it does |
-|------|--------------|
-| `Duration` | A length of time in minutes, with a safe value for a location that cannot be reached |
-| `EntityId` | Ids for donors, recipients, donations and transactions |
-| `Exceptions` | Error types that say what went wrong and where |
-| `Models` | The main records: donor, recipient, donation, transaction |
-| `Datamanager` | Loads, checks and saves the CSV files, and keeps everything in memory while the program runs |
-| `graph` | The road map, stored as a list of roads for each location |
-| `priorityqueue` | Gives the most urgent item first, for the urgency order and the shortest-path search |
-| `intstack` | Builds a route from the result of the shortest-path search |
-| `intqueue` | A first-in first-out list of numbers |
-| `hashindex` | Finds a donor, recipient or donation by its id |
-| `traveltime` | Shortest travel time and route between locations, plus two simple estimates that the tests use for comparison |
-| `RecommendationEngine` | Feasibility rules and ranking of recipients |
-| `Sorting` | Merge sort, used to rank the recipients |
-| `allocationmanager` | Carries out an allocation, closes donations, keeps the urgency order and gives out new ids |
-| `ConsoleView` | Every screen and question of the console program |
-| `main` | Starts the program, loads the data and runs the menu |
+**Folder layout**
 
-Each module has a header in `include/` and a source file in `src/`. `Sorting` is header-only.
+```
+Phase2/               console program
+  data/                 sample data files
+  include/ src/         headers and source files
+  tests/                test programs and the test runner
+Phase3/               Windows app
+  include/ src/ res/    code and window resources
+  tests/ tools/         tests and helper scripts
+  data/                 sample data the app works on
+  CMakeLists.txt        build description
+run.bat  demo.bat     build and run the console program
+```
 
-## Tests
+---
 
-Each module has its own small test program that checks it on its own, separate from the rest of the project. A test builds one part of the program with known inputs and compares the result against expected values. This makes it easy to find which part a bug is in.
+## 9. Why it is built this way
 
-Together the tests cover the feasibility rules, the ranking, the shortest paths, loading and saving, the console screens (with typed answers) and the larger sample dataset. One evaluation test compares the real travel times with a straight-line estimate and with no travel check at all, over a grid of scenarios.
+- **Screens never decide.** All rules, ranking and allocation live below the screens, so the console and the Windows app give the same answers.
+- **A fixed order for everything.** Rules, ranking keys and urgency all have a fixed order, so results can be repeated and checked.
+- **Nothing changes unless every check passes.** An allocation either happens completely or not at all.
+- **Plain messages.** Everything the user reads is in simple words, never internal codes.
+- **The finished console program stays untouched.** The Windows app was added next to it and reads its source files without changing them.
 
-## Limits
+## 10. Limits and next steps
+
+**Limits**
 
 - Travel times use simulated distances.
 - The program recommends. The coordinator decides.
-- New locations and roads are added by editing the two map files, not from the program.
+- One coordinator at a time, and no login. The role is chosen by name.
 - Donors and recipients cannot be edited or deleted from the program.
-- Names cannot contain a comma, because the data files are comma separated.
-- The program runs in the console.
+- New locations and roads are added by editing the two map files, not from the program.
+- Dietary needs such as vegetarian or non-vegetarian are not part of the data.
 
-## Next
+**Next**
 
-- A graphical window on top of the same code.
-- Adding locations and roads from inside the program.
+- Real road data.
+- Several coordinators at once, with login.
+- Editing and deleting records, and adding roads from inside the program.
+- Dietary needs as part of the rules.

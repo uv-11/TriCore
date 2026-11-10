@@ -13,7 +13,7 @@ It comes in two forms that share the same logic:
 
 ---
 
-## 1. The idea in one minute
+## 1. The idea 
 
 Food is often wasted while nearby organisations go without it. The hard part is not finding a recipient. It is finding one that:
 
@@ -24,7 +24,7 @@ Food is often wasted while nearby organisations go without it. The hard part is 
 
 Doing this by hand for many donations is slow and easy to get wrong. CommunityBridge does the checking in a fixed order, finds real travel times over a road map, and keeps a record of every decision.
 
-Two promises the program keeps:
+Two program assures :
 
 - **Every rejection has a reason.** The coordinator never sees "no" without a why.
 - **Same data, same answer.** The ranking order is fixed, so results can be repeated and checked.
@@ -39,29 +39,9 @@ Two promises the program keeps:
 
 In the console program one person plays the coordinator. In the Windows app each role has its own screens.
 
-## 3. See it work in three minutes
-
-```
-.\demo.bat                                         console program on a fresh copy of the data
-Phase3\run_gui.bat                                 Windows app
-cmd /c "Phase2\tests\test_all.bat nopause"         console tests
-ctest --test-dir Phase3\build --output-on-failure  Windows app tests (after run_gui.bat has built it)
-```
-
-In the console menu choose `1`. The program takes the most urgent donation and shows a result like this:
-
-> **DON001** from a banquet hall: 60 portions of cooked food, usable for 12 minutes
-
-| Rank | Recipient | Accepts | Travel | Spare room | Route |
-|------|-----------|---------|--------|------------|-------|
-| 1 | R013 | 60 | 8 min | 190 | 0 to 2 |
-| 2 | R004 | 60 | 12 min | 20 | 0 to 8 |
-
-R013 ranks first because both take all 60 portions, and R013 is closer. Every other recipient appears in a second list with its reason. Then the coordinator types a rank and a quantity, or `c` to close the donation.
-
 ---
 
-## 4. How a donation travels
+## 3. How a donation travels
 
 ```
  load and check the files
@@ -128,7 +108,7 @@ A donation can be split. If the coordinator gives 40 of 60 portions to the first
 
 ---
 
-## 5. The two programs
+## 4. The two programs
 
 ### Console menu
 
@@ -178,7 +158,7 @@ The Windows app compiles the console program's source files directly. Both progr
 
 ---
 
-## 6. How the code is organised
+## 5. How the code is organised
 
 ### Building blocks, from bottom to top
 
@@ -255,7 +235,7 @@ For the Windows app: start with `Workflow`, then open one page file.
 
 ---
 
-## 7. The data
+## 6. The data
 
 All data is in comma separated files. The first line of each file is a header that must match exactly.
 
@@ -279,7 +259,7 @@ All data is in comma separated files. The first line of each file is a header th
 
 ---
 
-## 8. Build, run and test
+## 7. Build, run and test
 
 **You need:** Windows, g++ (MinGW) with C++17. CMake is needed for the Windows app only. No other libraries.
 
@@ -319,7 +299,7 @@ run.bat  demo.bat     build and run the console program
 
 ---
 
-## 9. Limits and next steps
+## 8. Limits and next steps
 
 **Limits**
 

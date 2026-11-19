@@ -75,4 +75,52 @@ private:
     static EntityId last_;
 };
 
+// Hands out donation ids DON001, DON002, ... A static member keeps the last id, so numbers
+// are never reused. After a restart the highest id from donations.csv is given to seed.
+class donationidissuer
+{
+public:
+    // Sets the last id that was already issued.
+    static void seed(const EntityId& lastissued);
+
+    // Increases the last id by one with the ++ of EntityId and returns it.
+    static EntityId issuenext();
+
+private:
+    // The last id that was issued
+    static EntityId last_;
+};
+
+// Hands out donor ids DN001, DN002, ... A static member keeps the last id, so numbers are
+// never reused. After a restart the highest id from donors.csv is given to seed.
+class donoridissuer
+{
+public:
+    // Sets the last id that was already issued.
+    static void seed(const EntityId& lastissued);
+
+    // Increases the last id by one with the ++ of EntityId and returns it.
+    static EntityId issuenext();
+
+private:
+    // The last id that was issued
+    static EntityId last_;
+};
+
+// Hands out recipient ids R001, R002, ... A static member keeps the last id, so numbers are
+// never reused. After a restart the highest id from recipients.csv is given to seed.
+class recipientidissuer
+{
+public:
+    // Sets the last id that was already issued.
+    static void seed(const EntityId& lastissued);
+
+    // Increases the last id by one with the ++ of EntityId and returns it.
+    static EntityId issuenext();
+
+private:
+    // The last id that was issued
+    static EntityId last_;
+};
+
 #endif

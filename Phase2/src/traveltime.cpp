@@ -171,6 +171,21 @@ string straightlinetraveltime::name() const
     return "straight-line";
 }
 
+// Returns a 2-element route from source to target.
+vector<int> straightlinetraveltime::routeto(int source, int target) const
+{
+    if (source < 0 || source >= (int)xs_.size() || target < 0 || target >= (int)xs_.size())
+    {
+        throw StructureException("routeto node is not in the graph");
+    }
+
+    vector<int> route;
+    route.push_back(source);
+    route.push_back(target);
+    return route;
+}
+
+
 // Remembers the number of nodes.
 notravelcheck::notravelcheck(int count)
 {

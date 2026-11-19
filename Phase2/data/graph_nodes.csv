@@ -1,1 +1,21 @@
-
+node_id	label	x_km	y_km
+0	Karol Bagh Market	2.0	2.0
+1	Preet Vihar Crossing	5.5	2.0
+2	Azadpur Chowk Junction	9.0	2.0
+3	ITO Junction	12.5	2.0
+4	Nizamuddin Bridge Junction	2.0	5.5
+5	Paharganj Circle	5.5	5.5
+6	Connaught Place Inner Circle	9.0	5.5
+7	Shahdara Crossing	12.5	5.5
+8	Rajouri Garden Junction	2.0	9.0
+9	Dilshad Garden Metro Junction	5.5	9.0
+10	Lodhi Colony Crossing	9.0	9.0
+11	Tilak Nagar Junction	12.5	9.0
+12	Ram Nagar Crossing	2.0	12.5
+13	Barakhamba Road Junction	5.5	12.5
+14	Vivek Vihar Crossing	9.0	12.5
+15	Jangpura Extension Junction	12.5	12.5
+16	Mayur Vihar Isolated Pocket	40.0	2.0
+17	Patparganj Isolated Pocket	42.5	2.0
+18	Najafgarh Remote Junction	2.0	40.0
+19	Dwarka Sector Remote Point	4.5	40.0

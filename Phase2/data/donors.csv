@@ -1,7 +1,13 @@
 donor_id,name,type,node_id
 DN001,Shagun Banquet Hall Karol Bagh,CATERER,0
 DN002,Hotel Rajdhani Kitchen Preet Vihar,HOTEL,1
-DN003,Gupta Bakers Laxmi Nagar,BAKERY,3
+DN003,Diwan Caterers Paharganj,CATERER,5
 DN004,Okhla Mandi Fruit Traders,MARKET,4
-DN005,Daily Needs Supermarket Rohini,SUPERMARKET,2
-DN006,Sarita Vihar Hospital Canteen,CANTEEN,4
+DN005,Shahdara Sweets and Bakery,BAKERY,7
+DN006,Dilshad Garden Community Kitchen,CANTEEN,9
+DN007,Vivek Vihar Catering Co,CATERER,13
+DN008,ITO Corporate Cafeteria,CANTEEN,3
+DN009,Tilak Nagar Wholesale Mart,MARKET,11
+DN010,Connaught Place Hotel Grand,HOTEL,6
+DN011,Najafgarh Rural Kitchen,CANTEEN,18
+DN012,Azadpur Mandi Vegetable Traders,MARKET,2

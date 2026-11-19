@@ -58,13 +58,16 @@ class straightlinetraveltime : public traveltimeprovider
 public:
     // Stores the x and y coordinate (in km) of every node and the assumed speed.
     straightlinetraveltime(const vector<double>& xs, const vector<double>& ys,
-                           double kmperminute);
+                           double kmperminute = 0.5);
 
     // Returns ceil(distance in km / kmperminute) for every node.
     vector<Duration> traveltimesfrom(int source) const;
 
     // Returns the provider name.
     string name() const;
+
+    // Returns a 2-element route connecting source directly to target.
+    vector<int> routeto(int source, int target) const;
 
 private:
     // x coordinate of every node in km

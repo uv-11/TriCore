@@ -49,7 +49,7 @@ string allocerrormessage(AllocError error)
 // Runs the five checks of Spec 7.3 in order and changes state only after all of them
 // pass.
 AllocError allocate(Donation& donation, Recipient& recipient, int quantity,
-                          const Duration& travel, const EntityId& txnid)
+                    const Duration& travel, const EntityId& txnid)
 {
     (void)txnid;
     // outcome is what allocate returns: an AllocError code.
@@ -92,9 +92,7 @@ AllocError allocate(Donation& donation, Recipient& recipient, int quantity,
         donation.allocateQuantity(quantity);
         // The recipient has less capacity left.
         recipient.reduceCapacity(quantity);
-        // The transaction entry is created by the caller upon ALLOC_OK.
-        (void)txnid;
-        // state updated
+        return ALLOC_OK;
     }
 
     return outcome;
@@ -169,6 +167,54 @@ void transactionidissuer::seed(const EntityId& lastissued)
 EntityId transactionidissuer::issuenext()
 {
     // EntityId has its own ++ that adds 1 to the number part (T001 becomes T002).
+    ++last_;
+    return last_;
+}
+
+// The first id issued after a fresh start is DON000.
+EntityId donationidissuer::last_ = EntityId("DON", 0);
+
+// Remembers the last id that already exists.
+void donationidissuer::seed(const EntityId& lastissued)
+{
+    last_ = lastissued;
+}
+
+// Pre-increment gives the next number, and the stored id keeps that value.
+EntityId donationidissuer::issuenext()
+{
+    ++last_;
+    return last_;
+}
+
+// The first id issued after a fresh start is DN001.
+EntityId donoridissuer::last_ = EntityId("DN", 0);
+
+// Remembers the last id that already exists.
+void donoridissuer::seed(const EntityId& lastissued)
+{
+    last_ = lastissued;
+}
+
+// Pre-increment gives the next number, and the stored id keeps that value.
+EntityId donoridissuer::issuenext()
+{
+    ++last_;
+    return last_;
+}
+
+// The first id issued after a fresh start is R001.
+EntityId recipientidissuer::last_ = EntityId("R", 0);
+
+// Remembers the last id that already exists.
+void recipientidissuer::seed(const EntityId& lastissued)
+{
+    last_ = lastissued;
+}
+
+// Pre-increment gives the next number, and the stored id keeps that value.
+EntityId recipientidissuer::issuenext()
+{
     ++last_;
     return last_;
 }
